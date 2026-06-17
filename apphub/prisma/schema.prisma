@@ -1,0 +1,73 @@
+// This is your Prisma schema file.
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  apps      App[]
+}
+
+model App {
+  id             String       @id @default(cuid())
+  name           String
+  url            String       @unique
+  description    String?
+  icon           String?
+  categoryId     String
+  category       Category     @relation(fields: [categoryId], references: [id])
+  isPinned       Boolean      @default(false)
+  order          Int          @default(0)
+  status         String       @default("unknown")
+  previousStatus String       @default("unknown")
+  lastChecked    DateTime?
+  visibility     String       @default("shared")   // "shared" | "personal"
+  ownerId        String?                            // null = shared
+  owner          User?        @relation("PersonalApps", fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  history        AppHistory[]
+}
+
+model NotificationSetting {
+  id         String   @id @default(cuid())
+  type       String   // "slack" | "email"
+  enabled    Boolean  @default(true)
+  webhookUrl String?  // for Slack
+  emailTo    String?  // for email (comma-separated)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model AppHistory {
+  id       String   @id @default(cuid())
+  appId    String
+  app      App      @relation(fields: [appId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  openedAt DateTime @default(now())
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  password     String
+  name         String?
+  role         String       @default("member")
+  createdAt    DateTime     @default(now())
+  history      AppHistory[]
+  personalApps App[]        @relation("PersonalApps")
+}

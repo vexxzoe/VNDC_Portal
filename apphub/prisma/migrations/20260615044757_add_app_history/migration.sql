@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "AppHistory" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "appId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "openedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "AppHistory_appId_fkey" FOREIGN KEY ("appId") REFERENCES "App" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

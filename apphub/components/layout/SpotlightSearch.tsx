@@ -68,7 +68,7 @@ function nameToColor(name: string): string {
 
 function AppIcon({ app }: { app: App }) {
   const [imgFailed, setImgFailed] = useState(false);
-  const isUrl = app.icon?.startsWith("http");
+  const isUrl = app.icon?.startsWith("http") || app.icon?.startsWith("/");
 
   if (isUrl && !imgFailed) {
     return (
@@ -158,7 +158,7 @@ export function SpotlightSearch({ open, onOpenChange }: SpotlightSearchProps) {
        */}
       <Command shouldFilter={false} className="rounded-xl!">
         <CommandInput
-          placeholder="Search apps…"
+          placeholder="Tìm kiếm ứng dụng..."
           value={query}
           onValueChange={setQuery}
           autoFocus
@@ -169,7 +169,7 @@ export function SpotlightSearch({ open, onOpenChange }: SpotlightSearchProps) {
             <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
               <ExternalLink className="size-8 opacity-30" />
               <span className="text-sm">
-                No results for &ldquo;{query}&rdquo;
+                Không tìm thấy kết quả cho &ldquo;{query}&rdquo;
               </span>
             </div>
           </CommandEmpty>
@@ -177,7 +177,7 @@ export function SpotlightSearch({ open, onOpenChange }: SpotlightSearchProps) {
           {/* Pinned group */}
           {pinned.length > 0 && (
             <>
-              <CommandGroup heading="Pinned">
+              <CommandGroup heading="Đã ghim">
                 {pinned.map((app) => (
                   <ResultItem
                     key={app.id}
@@ -212,13 +212,13 @@ export function SpotlightSearch({ open, onOpenChange }: SpotlightSearchProps) {
         {/* Footer keyboard hints */}
         <div className="flex items-center gap-3 border-t px-3 py-2 text-xs text-muted-foreground">
           <span>
-            <kbd className="kbd">↑↓</kbd> navigate
+            <kbd className="kbd">↑↓</kbd> điều hướng
           </span>
           <span>
-            <kbd className="kbd">↵</kbd> open
+            <kbd className="kbd">↵</kbd> mở
           </span>
           <span>
-            <kbd className="kbd">esc</kbd> close
+            <kbd className="kbd">esc</kbd> đóng
           </span>
         </div>
       </Command>

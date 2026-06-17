@@ -28,6 +28,14 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 function CategoryIcon({ name, className }: { name: string | null; className?: string }) {
+  // Uploaded image or external URL → render as <img>
+  if (name && (name.startsWith("/") || name.startsWith("http"))) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={name} alt="" className={cn("size-4 shrink-0 rounded-sm object-cover", className)} />
+    );
+  }
+  // Lucide icon name (or null fallback)
   const Icon = name ? (ICON_MAP[name] ?? LayoutGrid) : LayoutGrid;
   return <Icon className={cn("size-4 shrink-0", className)} />;
 }
@@ -66,7 +74,7 @@ export function Sidebar({ selectedCategory, onSelectCategory, totalApps, persona
         {/* All Apps */}
         <SidebarItem
           icon={<CategoryIcon name={null} />}
-          label="All Apps"
+          label="Tất cả"
           count={totalApps}
           active={selectedCategory === null}
           onClick={() => onSelectCategory(null)}
@@ -87,7 +95,7 @@ export function Sidebar({ selectedCategory, onSelectCategory, totalApps, persona
         {/* Personal filter — always shown */}
         <SidebarItem
           icon={<Lock className="size-4 shrink-0" />}
-          label="My Apps"
+          label="Của tôi"
           count={personalCount}
           active={selectedCategory === "__personal__"}
           onClick={() => onSelectCategory("__personal__")}
@@ -108,7 +116,7 @@ export function Sidebar({ selectedCategory, onSelectCategory, totalApps, persona
             )}
           >
             <Settings className="size-4 shrink-0" />
-            <span className="truncate">Admin Panel</span>
+            <span className="truncate">Quản trị</span>
           </Link>
         </div>
       )}

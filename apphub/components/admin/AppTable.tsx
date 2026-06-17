@@ -41,12 +41,12 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
   function openEdit(app: App) { setEditApp(app); setModalOpen(true); }
 
   async function handleDelete(app: App) {
-    if (!confirm(`Delete "${app.name}"? This cannot be undone.`)) return;
+    if (!confirm(`Xóa "${app.name}"? Hành động này không thể hoàn tác.`)) return;
     setDeleting(app.id);
     const res = await fetch(`/api/apps/${app.id}`, { method: "DELETE" });
     setDeleting(null);
     if (res.ok) onRefresh();
-    else { const d = await res.json(); alert(d.error ?? "Failed to delete"); }
+    else { const d = await res.json(); alert(d.error ?? "Xóa thất bại"); }
   }
 
   const filtered = useMemo(() => {
@@ -67,22 +67,22 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
       {/* Toolbar */}
       <div className="flex items-center justify-between mb-4 gap-3">
         <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground">{filtered.length} / {apps.length} apps</p>
+          <p className="text-sm text-muted-foreground">Tổng {filtered.length} / {apps.length} ứng dụng</p>
           {/* Visibility filter */}
           <Select value={filter} onValueChange={(v) => setFilter((v ?? "all") as FilterValue)}>
             <SelectTrigger className="h-8 w-36 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All apps</SelectItem>
-              <SelectItem value="shared">Shared only</SelectItem>
-              <SelectItem value="personal">Personal only</SelectItem>
+              <SelectItem value="all">Tất cả</SelectItem>
+              <SelectItem value="shared">Chỉ dùng chung</SelectItem>
+              <SelectItem value="personal">Chỉ cá nhân</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Button size="sm" onClick={openAdd} className="gap-1.5">
           <Plus className="size-4" />
-          Add New App
+          Thêm ứng dụng
         </Button>
       </div>
 
@@ -90,15 +90,15 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-10">Icon</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead className="w-10">Biểu tượng</TableHead>
+              <TableHead>Tên</TableHead>
               <TableHead className="hidden md:table-cell">URL</TableHead>
-              <TableHead className="hidden sm:table-cell">Category</TableHead>
-              <TableHead className="w-24">Visibility</TableHead>
-              <TableHead className="hidden lg:table-cell">Owner</TableHead>
-              <TableHead className="w-14 text-center">Pinned</TableHead>
-              <TableHead className="w-20">Status</TableHead>
-              <TableHead className="w-20 text-right">Actions</TableHead>
+              <TableHead className="hidden sm:table-cell">Danh mục</TableHead>
+              <TableHead className="w-24">Loại</TableHead>
+              <TableHead className="hidden lg:table-cell">Người sở hữu</TableHead>
+              <TableHead className="w-14 text-center">Đã ghim</TableHead>
+              <TableHead className="w-20">Trạng thái</TableHead>
+              <TableHead className="w-20 text-right">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -106,7 +106,7 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
               <TableRow key={app.id}>
                 {/* Icon */}
                 <TableCell>
-                  {app.icon?.startsWith("http") ? (
+                  {app.icon?.startsWith("http") || app.icon?.startsWith("/") ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={app.icon} alt="" className="size-7 rounded object-contain bg-muted p-0.5" />
                   ) : (
@@ -140,7 +140,7 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
                         : "bg-slate-400/10 text-slate-600 border-slate-400/20"
                     )}
                   >
-                    {app.visibility}
+                    {app.visibility === "shared" ? "Dùng chung" : "Cá nhân"}
                   </Badge>
                 </TableCell>
 
@@ -171,7 +171,7 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
                       <TooltipTrigger render={<Button variant="ghost" size="sm" onClick={() => openEdit(app)} className="size-7 p-0" />}>
                         <Pencil className="size-3.5" />
                       </TooltipTrigger>
-                      <TooltipContent>Edit</TooltipContent>
+                      <TooltipContent>Chỉnh sửa</TooltipContent>
                     </Tooltip>
                     <Tooltip>
                       <TooltipTrigger
@@ -183,7 +183,7 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
                       >
                         <Trash2 className="size-3.5" />
                       </TooltipTrigger>
-                      <TooltipContent>Delete</TooltipContent>
+                      <TooltipContent>Xóa</TooltipContent>
                     </Tooltip>
                   </div>
                 </TableCell>
@@ -193,7 +193,7 @@ export function AppTable({ apps, categories, onRefresh }: AppTableProps) {
             {filtered.length === 0 && (
               <TableRow>
                 <TableCell colSpan={9} className="h-32 text-center text-muted-foreground">
-                  {filter === "all" ? "No apps yet. Click \"Add New App\" to get started." : `No ${filter} apps found.`}
+                  {filter === "all" ? "Chưa có ứng dụng. Nhấn \"Thêm ứng dụng\" để bắt đầu." : `Không có ứng dụng nào.`}
                 </TableCell>
               </TableRow>
             )}

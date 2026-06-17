@@ -13,22 +13,22 @@ export default function ErrorPage({
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
       <div className="text-5xl" aria-hidden="true">⚠️</div>
-      <h1 className="text-2xl font-bold">Something went wrong</h1>
+      <h1 className="text-2xl font-bold">Đã có lỗi xảy ra</h1>
       <p className="max-w-md text-muted-foreground">
-        {error.message || "An unexpected error occurred."}
+        {error.message || "Đã xảy ra lỗi không mong muốn."}
       </p>
       {error.digest && (
         <p className="font-mono text-xs text-muted-foreground/60">
-          Error ID: {error.digest}
+          Mã lỗi: {error.digest}
         </p>
       )}
       <div className="flex gap-3">
-        <Button onClick={reset}>Try again</Button>
+        <Button onClick={reset}>Thử lại</Button>
         <Link
           href="/"
           className="inline-flex h-9 items-center justify-center rounded-lg border border-input bg-transparent px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
         >
-          Go to Dashboard
+          Về trang chủ
         </Link>
       </div>
     </main>

@@ -63,7 +63,7 @@ export default function AdminPage() {
           <span className="text-lg font-bold tracking-tight">AppHub</span>
         </div>
         <span className="text-muted-foreground">/</span>
-        <span className="text-sm font-medium">Admin Panel</span>
+        <span className="text-sm font-medium">Trang quản trị</span>
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
@@ -72,33 +72,33 @@ export default function AdminPage() {
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="size-4" />
-          Back to Dashboard
+          Về trang chủ
         </Link>
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">Admin Panel</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Trang quản trị</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage apps, categories, and users across AppHub.
+            Quản lý ứng dụng, danh mục và người dùng trong AppHub.
           </p>
         </div>
 
         <Tabs defaultValue="apps">
           <TabsList className="mb-6">
             <TabsTrigger value="apps">
-              Apps
+              Ứng dụng
               <span className="ml-1.5 rounded-full bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
                 {loadingApps ? "…" : apps.length}
               </span>
             </TabsTrigger>
             <TabsTrigger value="categories">
-              Categories
+              Danh mục
               <span className="ml-1.5 rounded-full bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
                 {loadingCats ? "…" : categories.length}
               </span>
             </TabsTrigger>
             {isAdmin && (
               <TabsTrigger value="users">
-                Users
+                Người dùng
                 <span className="ml-1.5 rounded-full bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
                   {loadingUsers ? "…" : users.length}
                 </span>
@@ -106,7 +106,7 @@ export default function AdminPage() {
             )}
             {isAdmin && (
               <TabsTrigger value="notifications">
-                Notifications
+                Thông báo
               </TabsTrigger>
             )}
           </TabsList>
@@ -152,7 +152,7 @@ export default function AdminPage() {
 function LoadingRow() {
   return (
     <div className="flex h-40 items-center justify-center text-sm text-muted-foreground">
-      Loading…
+      Đang tải...
     </div>
   );
 }

@@ -134,16 +134,16 @@ export default function DashboardPage() {
   // Health check
   const handleCheckNow = useCallback(async () => {
     setChecking(true);
-    const toastId = toast.loading("Running health check…");
+    const toastId = toast.loading("Đang kiểm tra...");
     try {
       const res = await fetch("/api/health");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Health check failed");
       const { up, down, checked } = data as { up: number; down: number; checked: number };
-      toast.success(`Health check complete: ${up} online, ${down} offline`, { id: toastId, description: `${checked} apps checked` });
+      toast.success(`Kiểm tra hoàn tất: ${up} trực tuyến, ${down} ngoại tuyến`, { id: toastId, description: `Đã kiểm tra ${checked} ứng dụng` });
       fetchApps();
     } catch (e) {
-      toast.error("Health check failed", { id: toastId, description: e instanceof Error ? e.message : "Unknown error" });
+      toast.error("Kiểm tra thất bại", { id: toastId, description: e instanceof Error ? e.message : "Unknown error" });
     } finally { setChecking(false); }
   }, [fetchApps]);
 
@@ -161,9 +161,9 @@ export default function DashboardPage() {
 
   const personalCount = apps.filter((a) => a.visibility === "personal").length;
 
-  const viewLabel = isPersonalFilter ? "My Apps"
+  const viewLabel = isPersonalFilter ? "Ứng dụng của tôi"
     : selectedCategory ? (apps[0]?.category?.name ?? selectedCategory)
-    : "All Apps";
+    : "Tất cả ứng dụng";
 
   return (
     <>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
           {/* Recently Used */}
           {recentApps.length > 0 && (
             <section>
-              <SectionHeading icon={<Clock className="size-3.5" />}>Recently Used</SectionHeading>
+      <SectionHeading icon={<Clock className="size-3.5" />}>Truy cập gần đây</SectionHeading>
               <div className="flex gap-3 overflow-x-auto pb-1">
                 {recentApps.map((app) => (
                   <RecentAppCard key={app.id} {...app} onOpen={handleAppOpen} />
@@ -210,14 +210,14 @@ export default function DashboardPage() {
             <div>
               <h1 className="text-2xl font-bold tracking-tight">{viewLabel}</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                {loading ? "Loading…" : (
-                  <>Showing <span className="font-medium text-foreground">{visibleApps.length}</span> {visibleApps.length === 1 ? "app" : "apps"}</>
+                {loading ? "Đang tải…" : (
+                  <>Hiển thị <span className="font-medium text-foreground">{visibleApps.length}</span> ứng dụng</>
                 )}
               </p>
             </div>
             <Button variant="outline" size="sm" onClick={handleCheckNow} disabled={checking} className="shrink-0 gap-1.5">
               <RefreshCw className={`size-3.5 ${checking ? "animate-spin" : ""}`} />
-              {checking ? "Checking…" : "Check Now"}
+              {checking ? "Đang kiểm tra…" : "Kiểm tra ngay"}
             </Button>
           </div>
 
@@ -229,7 +229,7 @@ export default function DashboardPage() {
               {pinned.length > 0 && (
                 <section>
                   <SectionHeading>
-                    ★ Pinned Apps <Count n={pinned.length} />
+                    ★ Ứng dụng đã ghim <Count n={pinned.length} />
                   </SectionHeading>
                   <ul className={GRID}>
                     {pinned.map((app) => app.visibility === "personal"
@@ -244,7 +244,7 @@ export default function DashboardPage() {
               {!isPersonalFilter && shared.length > 0 && (
                 <section>
                   <SectionHeading icon={<Globe className="size-3.5" />}>
-                    Shared Apps <Count n={shared.length} />
+                    Ứng dụng chung <Count n={shared.length} />
                   </SectionHeading>
                   <ul className={GRID}>
                     {shared.map((app) => (
@@ -260,7 +260,7 @@ export default function DashboardPage() {
               <section>
                 <div className="mb-3 flex items-center justify-between">
                   <SectionHeading icon={<Lock className="size-3.5" />}>
-                    My Apps <Count n={personal.length} />
+                    Ứng dụng của tôi <Count n={personal.length} />
                   </SectionHeading>
                   <Button size="sm" variant="outline" className="h-7 gap-1 px-2 text-xs"
                     onClick={() => setAddPersonalOpen(true)}>
@@ -272,9 +272,9 @@ export default function DashboardPage() {
                 {personal.length === 0 ? (
                   <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center">
                     <Lock className="mb-2 size-8 text-muted-foreground/30" />
-                    <p className="text-sm text-muted-foreground">No personal apps yet.</p>
+                    <p className="text-sm text-muted-foreground">Chưa có ứng dụng cá nhân nào.</p>
                     <Button variant="link" size="sm" className="mt-1 text-xs" onClick={() => setAddPersonalOpen(true)}>
-                      Click + to add one
+                      Nhấn + để thêm mới
                     </Button>
                   </div>
                 ) : (
@@ -287,10 +287,10 @@ export default function DashboardPage() {
                           onOpen={handleAppOpen}
                           onEdit={(id) => setEditPersonalApp(apps.find((a) => a.id === id) ?? null)}
                           onDelete={(id) => {
-                            if (!confirm("Delete this app?")) return;
+                            if (!confirm("Xóa ứng dụng này?")) return;
                             fetch(`/api/apps/${id}`, { method: "DELETE" })
-                              .then((r) => { if (r.ok) { toast.success("App deleted"); fetchApps(); } })
-                              .catch(() => toast.error("Failed to delete"));
+                              .then((r) => { if (r.ok) { toast.success("Đã xóa ứng dụng"); fetchApps(); } })
+                              .catch(() => toast.error("Xóa thất bại"));
                           }}
                         />
                       </li>

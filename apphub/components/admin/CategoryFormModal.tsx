@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { IconField } from "@/components/ui/icon-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Category } from "@/lib/types";
@@ -36,16 +37,16 @@ const EMPTY: FormState = { name: "", slug: "", icon: "", order: "0" };
 
 // Suggested icon options with live Lucide preview
 const ICON_OPTIONS: { value: string; label: string; Icon: LucideIcon }[] = [
-  { value: "code-2",      label: "Code",       Icon: Code2 },
-  { value: "server",      label: "Server",     Icon: Server },
-  { value: "users",       label: "Users",      Icon: Users },
-  { value: "dollar-sign", label: "Finance",    Icon: DollarSign },
+  { value: "code-2",      label: "Lập trình",  Icon: Code2 },
+  { value: "server",      label: "Máy chủ",    Icon: Server },
+  { value: "users",       label: "Người dùng", Icon: Users },
+  { value: "dollar-sign", label: "Tài chính",  Icon: DollarSign },
   { value: "megaphone",   label: "Marketing",  Icon: Megaphone },
-  { value: "globe",       label: "Globe",      Icon: Globe },
-  { value: "database",    label: "Database",   Icon: Database },
-  { value: "bar-chart",   label: "Analytics",  Icon: BarChart },
-  { value: "settings",    label: "Settings",   Icon: Settings },
-  { value: "shield",      label: "Security",   Icon: Shield },
+  { value: "globe",       label: "Mạng",       Icon: Globe },
+  { value: "database",    label: "Cơ sở dữ liệu", Icon: Database },
+  { value: "bar-chart",   label: "Thống kê",   Icon: BarChart },
+  { value: "settings",    label: "Cài đặt",    Icon: Settings },
+  { value: "shield",      label: "Bảo mật",    Icon: Shield },
 ];
 
 function slugify(str: string) {
@@ -99,8 +100,8 @@ export function CategoryFormModal({
 
   async function handleSave() {
     setError(null);
-    if (!form.name.trim()) { setError("Name is required"); return; }
-    if (!form.slug.trim()) { setError("Slug is required"); return; }
+    if (!form.name.trim()) { setError("Tên là bắt buộc"); return; }
+    if (!form.slug.trim()) { setError("Slug là bắt buộc"); return; }
 
     setSaving(true);
     const payload = {
@@ -121,20 +122,21 @@ export function CategoryFormModal({
     const data = await res.json();
     setSaving(false);
 
-    if (!res.ok) { setError(data.error ?? "Failed to save category"); return; }
+    if (!res.ok) { setError(data.error ?? "Lưu danh mục thất bại"); return; }
     onSaved();
     onOpenChange(false);
   }
 
-  // Find current icon component for preview
-  const selectedIconObj = ICON_OPTIONS.find((o) => o.value === form.icon);
+  // Find current icon component for preview — handle both Lucide names and image URLs
+  const isIconUrl = form.icon.startsWith("/") || form.icon.startsWith("http");
+  const selectedIconObj = !isIconUrl ? ICON_OPTIONS.find((o) => o.value === form.icon) : null;
   const PreviewIcon = selectedIconObj?.Icon ?? null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Category" : "Add New Category"}</DialogTitle>
+          <DialogTitle>{isEdit ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-2">
@@ -146,7 +148,7 @@ export function CategoryFormModal({
 
           {/* Name */}
           <div className="grid gap-1.5">
-            <Label htmlFor="cat-name">Name *</Label>
+            <Label htmlFor="cat-name">Tên *</Label>
             <Input id="cat-name" value={form.name} onChange={(e) => setField("name", e.target.value)} placeholder="Development" />
           </div>
 
@@ -154,14 +156,17 @@ export function CategoryFormModal({
           <div className="grid gap-1.5">
             <Label htmlFor="cat-slug">Slug *</Label>
             <Input id="cat-slug" value={form.slug} onChange={(e) => handleSlugChange(e.target.value)} placeholder="development" />
-            <p className="text-xs text-muted-foreground">Auto-generated from name. Edit manually to override.</p>
+            <p className="text-xs text-muted-foreground">Tự động tạo từ tên. Có thể chỉnh sửa thủ công.</p>
           </div>
 
           {/* Icon picker */}
           <div className="grid gap-1.5">
-            <Label>Icon</Label>
+            <Label>Biểu tượng</Label>
             <div className="flex items-center gap-2 mb-2">
-              {PreviewIcon ? (
+              {isIconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={form.icon} alt="" className="size-8 rounded object-cover bg-muted" />
+              ) : PreviewIcon ? (
                 <span className="flex size-8 items-center justify-center rounded bg-primary/10">
                   <PreviewIcon className="size-4 text-primary" />
                 </span>
@@ -192,21 +197,30 @@ export function CategoryFormModal({
                 </button>
               ))}
             </div>
+
+            {/* Image upload option */}
+            <div className="pt-1">
+              <p className="mb-1.5 text-xs text-muted-foreground">Hoặc tải lên ảnh biểu tượng:</p>
+              <IconField
+                value={form.icon.startsWith("/") || form.icon.startsWith("http") ? form.icon : ""}
+                onChange={(url) => setField("icon", url)}
+              />
+            </div>
           </div>
 
           {/* Order */}
           <div className="grid gap-1.5">
-            <Label htmlFor="cat-order">Order</Label>
+            <Label htmlFor="cat-order">Thứ tự</Label>
             <Input id="cat-order" type="number" value={form.order} onChange={(e) => setField("order", e.target.value)} min={0} />
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-            Cancel
+            Hủy
           </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Đang lưu..." : "Lưu"}
           </Button>
         </DialogFooter>
       </DialogContent>

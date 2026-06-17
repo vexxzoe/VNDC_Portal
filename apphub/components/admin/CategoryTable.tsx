@@ -24,6 +24,10 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 function CategoryIcon({ name }: { name: string | null }) {
+  if (name && (name.startsWith("/") || name.startsWith("http"))) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={name} alt="" className="size-4 rounded-sm object-cover" />;
+  }
   const Icon = name ? (ICON_MAP[name] ?? LayoutGrid) : LayoutGrid;
   return <Icon className="size-4 text-muted-foreground" />;
 }
@@ -44,35 +48,29 @@ export function CategoryTable({ categories, onRefresh }: CategoryTableProps) {
   async function handleDelete(cat: Category) {
     const appCount = cat._count?.apps ?? 0;
     if (appCount > 0) {
-      // Should not reach here (button is disabled), but guard anyway
-      alert(`Cannot delete "${cat.name}": remove its ${appCount} app(s) first.`);
+      alert(`Không thể xóa "${cat.name}": xóa ${appCount} ứng dụng trước.`);
       return;
     }
-    if (!confirm(`Delete category "${cat.name}"?`)) return;
+    if (!confirm(`Xóa danh mục "${cat.name}"?`)) return;
     setDeleting(cat.id);
     const res = await fetch(`/api/categories/${cat.id}`, { method: "DELETE" });
     setDeleting(null);
     if (res.ok) onRefresh();
     else {
       const d = await res.json();
-      alert(d.error ?? "Failed to delete");
+      alert(d.error ?? "Xóa thất bại");
     }
   }
 
   return (
     <>
-      <CategoryFormModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        category={editCat}
-        onSaved={onRefresh}
-      />
+      <CategoryFormModal open={modalOpen} onOpenChange={setModalOpen} category={editCat} onSaved={onRefresh} />
 
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{categories.length} categories total</p>
+        <p className="text-sm text-muted-foreground">Tổng {categories.length} danh mục</p>
         <Button size="sm" onClick={openAdd} className="gap-1.5">
           <Plus className="size-4" />
-          Add New Category
+          Thêm danh mục
         </Button>
       </div>
 
@@ -80,12 +78,12 @@ export function CategoryTable({ categories, onRefresh }: CategoryTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-10">Icon</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead className="w-10">Biểu tượng</TableHead>
+              <TableHead>Tên</TableHead>
               <TableHead className="hidden sm:table-cell">Slug</TableHead>
-              <TableHead className="w-24 text-center">Apps</TableHead>
-              <TableHead className="w-16 text-center">Order</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-24 text-center">Số ứng dụng</TableHead>
+              <TableHead className="w-16 text-center">Thứ tự</TableHead>
+              <TableHead className="w-24 text-right">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,40 +110,21 @@ export function CategoryTable({ categories, onRefresh }: CategoryTableProps) {
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Tooltip>
-                        <TooltipTrigger
-                          render={
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => openEdit(cat)}
-                              className="size-7 p-0"
-                            />
-                          }
-                        >
+                        <TooltipTrigger render={<Button variant="ghost" size="sm" onClick={() => openEdit(cat)} className="size-7 p-0" />}>
                           <Pencil className="size-3.5" />
                         </TooltipTrigger>
-                        <TooltipContent>Edit</TooltipContent>
+                        <TooltipContent>Chỉnh sửa</TooltipContent>
                       </Tooltip>
-
-                      {/* Delete — disabled if category has apps */}
                       <Tooltip>
-                        <TooltipTrigger
-                          render={
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDelete(cat)}
-                              disabled={hasApps || deleting === cat.id}
-                              className="size-7 p-0 text-destructive hover:text-destructive disabled:pointer-events-none"
-                            />
-                          }
-                        >
+                        <TooltipTrigger render={
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete(cat)}
+                            disabled={hasApps || deleting === cat.id}
+                            className="size-7 p-0 text-destructive hover:text-destructive disabled:pointer-events-none" />
+                        }>
                           <Trash2 className="size-3.5" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          {hasApps
-                            ? `Remove all ${appCount} app(s) first`
-                            : "Delete"}
+                          {hasApps ? `Xóa hết ${appCount} ứng dụng trước` : "Xóa"}
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -153,11 +132,10 @@ export function CategoryTable({ categories, onRefresh }: CategoryTableProps) {
                 </TableRow>
               );
             })}
-
             {categories.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                  No categories yet.
+                  Chưa có danh mục nào.
                 </TableCell>
               </TableRow>
             )}

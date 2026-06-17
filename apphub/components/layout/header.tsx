@@ -61,7 +61,7 @@ export function Header({ onOpenSpotlight }: HeaderProps) {
           aria-label="Open search (Ctrl+K)"
         >
           <Search className="size-4 shrink-0" />
-          <span className="flex-1 text-left">Search apps…</span>
+          <span className="flex-1 text-left">Tìm ứng dụng…</span>
           <kbd className="hidden items-center gap-0.5 rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground sm:flex">
             <span className="text-xs">⌘</span>K
           </kbd>
@@ -115,7 +115,7 @@ export function Header({ onOpenSpotlight }: HeaderProps) {
                   className="cursor-pointer"
                 >
                   <UserCircle className="size-4" />
-                  My Profile
+                  Hồ sơ cá nhân
                 </DropdownMenuItem>
 
                 {/* Admin Panel — only visible to admins */}
@@ -125,7 +125,7 @@ export function Header({ onOpenSpotlight }: HeaderProps) {
                     className="cursor-pointer"
                   >
                     <Settings className="size-4" />
-                    Admin Panel
+                    Trang quản trị
                   </DropdownMenuItem>
                 )}
               </DropdownMenuGroup>
@@ -139,7 +139,7 @@ export function Header({ onOpenSpotlight }: HeaderProps) {
                   variant="destructive"
                 >
                   <LogOut className="size-4" />
-                  Logout
+                  Đăng xuất
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>

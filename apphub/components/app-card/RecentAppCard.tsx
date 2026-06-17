@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -45,10 +46,10 @@ export function RecentAppCard({
   openedAt,
   onOpen,
 }: RecentAppCardProps) {
-  const isIconUrl = icon?.startsWith("http");
+  const isIconUrl = icon?.startsWith("http") || icon?.startsWith("/");
   const initials = name.slice(0, 2).toUpperCase();
   const avatarBg = nameToColor(name);
-  const timeAgo = formatDistanceToNow(new Date(openedAt), { addSuffix: true });
+  const timeAgo = formatDistanceToNow(new Date(openedAt), { addSuffix: true, locale: vi });
 
   function handleOpen() {
     fetch(`/api/apps/${id}/open`, { method: "POST" }).catch(() => {});
@@ -106,7 +107,7 @@ export function RecentAppCard({
           onClick={handleOpen}
         >
           <ExternalLink className="size-3" />
-          Open
+          Mở
         </Button>
       </div>
     </div>

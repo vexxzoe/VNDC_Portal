@@ -37,14 +37,14 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
   function openEdit(u: AdminUser) { setEditUser(u); setModalOpen(true); }
 
   async function handleDelete(u: AdminUser) {
-    if (!confirm(`Delete user "${u.name ?? u.email}"? This cannot be undone.`)) return;
+    if (!confirm(`Xóa người dùng "${u.name ?? u.email}"? Hành động này không thể hoàn tác.`)) return;
     setDeleting(u.id);
     const res = await fetch(`/api/users/${u.id}`, { method: "DELETE" });
     setDeleting(null);
     if (res.ok) onRefresh();
     else {
       const d = await res.json();
-      alert(d.error ?? "Failed to delete user");
+      alert(d.error ?? "Xóa người dùng thất bại");
     }
   }
 
@@ -59,10 +59,10 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
       />
 
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{users.length} users total</p>
+        <p className="text-sm text-muted-foreground">Tổng {users.length} người dùng</p>
         <Button size="sm" onClick={openAdd} className="gap-1.5">
           <Plus className="size-4" />
-          Add New User
+          Thêm người dùng
         </Button>
       </div>
 
@@ -70,12 +70,12 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-10">Avatar</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead className="w-10">Ảnh đại diện</TableHead>
+              <TableHead>Họ tên</TableHead>
               <TableHead className="hidden sm:table-cell">Email</TableHead>
-              <TableHead className="w-24">Role</TableHead>
-              <TableHead className="hidden md:table-cell w-32">Joined</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-24">Vai trò</TableHead>
+              <TableHead className="hidden md:table-cell w-32">Ngày tạo</TableHead>
+              <TableHead className="w-24 text-right">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,7 +99,7 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
                   {/* Name */}
                   <TableCell className="font-medium">
                     {u.name ?? <span className="text-muted-foreground italic">—</span>}
-                    {isSelf && <span className="ml-1.5 text-xs text-muted-foreground">(you)</span>}
+                    {isSelf && <span className="ml-1.5 text-xs text-muted-foreground">(bạn)</span>}
                   </TableCell>
 
                   {/* Email */}
@@ -118,7 +118,7 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
                           : "bg-slate-400/10 text-slate-600 border-slate-400/20"
                       )}
                     >
-                      {u.role}
+                      {u.role === "admin" ? "Quản trị viên" : "Thành viên"}
                     </Badge>
                   </TableCell>
 
@@ -138,7 +138,7 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
                         >
                           <Pencil className="size-3.5" />
                         </TooltipTrigger>
-                        <TooltipContent>Edit</TooltipContent>
+                        <TooltipContent>Chỉnh sửa</TooltipContent>
                       </Tooltip>
 
                       <Tooltip>
@@ -156,7 +156,7 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
                           <Trash2 className="size-3.5" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          {isSelf ? "Cannot delete your own account" : "Delete"}
+                          {isSelf ? "Không thể xóa tài khoản của mình" : "Xóa"}
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -168,7 +168,7 @@ export function UserTable({ users, currentUserId, onRefresh }: UserTableProps) {
             {users.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                  No users found.
+                  Không có người dùng nào.
                 </TableCell>
               </TableRow>
             )}

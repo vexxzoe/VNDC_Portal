@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import { ExternalLink, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,17 +48,17 @@ function nameToColor(name: string): string {
 const STATUS_CONFIG: Record<string, { dot: string; label: string; badge: string }> = {
   up: {
     dot: "bg-green-500",
-    label: "Online",
+    label: "Trực tuyến",
     badge: "bg-green-500/10 text-green-600 border-green-500/20",
   },
   down: {
     dot: "bg-red-500",
-    label: "Offline",
+    label: "Ngoại tuyến",
     badge: "bg-red-500/10 text-red-600 border-red-500/20",
   },
   unknown: {
     dot: "bg-slate-400",
-    label: "Unknown",
+    label: "Không xác định",
     badge: "bg-slate-400/10 text-slate-500 border-slate-400/20",
   },
 };
@@ -79,14 +80,14 @@ export function AppCard({
   onOpen,
 }: AppCardProps) {
   const statusCfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.unknown;
-  const isIconUrl = icon?.startsWith("http");
+  const isIconUrl = icon?.startsWith("http") || icon?.startsWith("/");
   const initials = name.slice(0, 2).toUpperCase();
   const avatarBg = nameToColor(name);
 
   // Format lastChecked for tooltip
   const checkedLabel = lastChecked
-    ? `Last checked: ${formatDistanceToNow(new Date(lastChecked), { addSuffix: true })}`
-    : "Not checked yet";
+    ? `Kiểm tra lần cuối: ${formatDistanceToNow(new Date(lastChecked), { addSuffix: true, locale: vi })}`
+    : "Chưa kiểm tra";
 
   return (
     <Card
@@ -153,7 +154,7 @@ export function AppCard({
             !description && "italic opacity-50"
           )}
         >
-          {description ?? "No description"}
+          {description ?? "Chưa có mô tả"}
         </p>
 
         {/* ── Action row ── */}
@@ -169,7 +170,7 @@ export function AppCard({
             }}
           >
             <ExternalLink className="size-3.5" />
-            Open App
+            Mở ứng dụng
           </Button>
 
           <Button
@@ -180,8 +181,8 @@ export function AppCard({
               isPinned && "text-amber-500 hover:text-amber-600"
             )}
             onClick={() => onPinToggle(id)}
-            aria-label={isPinned ? "Unpin app" : "Pin app"}
-            title={isPinned ? "Unpin" : "Pin to top"}
+            aria-label={isPinned ? "Bỏ ghim" : "Ghim"}
+            title={isPinned ? "Bỏ ghim" : "Ghim lên đầu"}
           >
             <Star
               className={cn(

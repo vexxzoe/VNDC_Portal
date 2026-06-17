@@ -44,3 +44,12 @@ next-env.d.ts
 /generated
 prisma/apphub.db
 prisma/apphub.db-journal
+
+# prisma
+/generated
+prisma/apphub.db
+prisma/apphub.db-journal
+
+# uploaded icons — keep the directory but ignore actual uploads
+/public/uploads/icons/*
+!/public/uploads/icons/.gitkeep

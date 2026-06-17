@@ -154,3 +154,39 @@ pm2 restart apphub
 | Prisma migration fails | Check `DATABASE_URL` in `.env.local` |
 | Email test fails | Verify Gmail App Password (not login password); enable 2FA first |
 | Admin panel inaccessible | Log out and log back in — JWT tokens from before role migration need refresh |
+
+---
+
+## Persistent Uploads
+
+Uploaded icon images are stored in `public/uploads/icons/`. This directory must persist between deployments.
+
+### Option A — Keep on VPS (simple)
+
+Uploads live at `/var/www/apphub/public/uploads/icons/` and persist as long as you don't delete the folder.
+
+When redeploying, **do NOT run `rm -rf` on the project folder**. Instead:
+
+```bash
+git pull
+npm install
+npm run build
+npx prisma migrate deploy
+pm2 restart apphub
+```
+
+### Option B — Symlink (safer, survives re-clones)
+
+```bash
+# Create a persistent uploads folder outside the project
+mkdir -p /var/www/uploads/icons
+
+# On first deploy, move any existing uploads
+mv /var/www/apphub/public/uploads/icons/* /var/www/uploads/icons/ 2>/dev/null || true
+
+# Create symlink so Next.js serves from the persistent location
+rm -rf /var/www/apphub/public/uploads
+ln -s /var/www/uploads /var/www/apphub/public/uploads
+```
+
+After this, uploads survive even a full `git clone` redeploy.

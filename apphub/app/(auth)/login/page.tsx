@@ -35,7 +35,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Invalid credentials. Please try again.");
+      setError("Email hoặc mật khẩu không đúng.");
       return;
     }
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">AppHub</CardTitle>
           <CardDescription>
-            Sign in to access your internal tools
+            Đăng nhập để truy cập các ứng dụng nội bộ
           </CardDescription>
         </CardHeader>
 
@@ -78,7 +78,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Mật khẩu</Label>
               <Input
                 id="password"
                 type="password"
@@ -91,7 +91,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in…" : "Sign in"}
+              {loading ? "Đang đăng nhập…" : "Đăng nhập"}
             </Button>
           </form>
         </CardContent>

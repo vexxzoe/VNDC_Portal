@@ -44,7 +44,7 @@ export function PersonalAppCard({
   lastChecked, onOpen, onEdit, onDelete, onPinToggle,
 }: PersonalAppCardProps) {
   const statusCfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.unknown;
-  const isIconUrl = icon?.startsWith("http");
+  const isIconUrl = icon?.startsWith("http") || icon?.startsWith("/");
   const initials = name.slice(0, 2).toUpperCase();
   const avatarBg = nameToColor(name);
   const checkedLabel = lastChecked

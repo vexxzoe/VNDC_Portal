@@ -24,26 +24,14 @@ interface UserFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user?: AdminUser | null;
-  currentUserId: string; // logged-in admin's own id
+  currentUserId: string;
   onSaved: () => void;
 }
 
-interface FormState {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-}
-
+interface FormState { name: string; email: string; password: string; role: string; }
 const EMPTY: FormState = { name: "", email: "", password: "", role: "member" };
 
-export function UserFormModal({
-  open,
-  onOpenChange,
-  user,
-  currentUserId,
-  onSaved,
-}: UserFormModalProps) {
+export function UserFormModal({ open, onOpenChange, user, currentUserId, onSaved }: UserFormModalProps) {
   const isEdit = !!user;
   const isSelf = user?.id === currentUserId;
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -53,48 +41,33 @@ export function UserFormModal({
 
   useEffect(() => {
     if (open) {
-      setError(null);
-      setShowPw(false);
-      setForm(
-        user
-          ? { name: user.name ?? "", email: user.email, password: "", role: user.role }
-          : EMPTY
-      );
+      setError(null); setShowPw(false);
+      setForm(user ? { name: user.name ?? "", email: user.email, password: "", role: user.role } : EMPTY);
     }
   }, [open, user]);
 
-  function set(field: keyof FormState, value: string) {
-    setForm((f) => ({ ...f, [field]: value }));
-  }
+  function set(field: keyof FormState, value: string) { setForm((f) => ({ ...f, [field]: value })); }
 
   async function handleSave() {
     setError(null);
-    if (!form.name.trim()) { setError("Name is required"); return; }
-    if (!form.email.trim()) { setError("Email is required"); return; }
-    if (!isEdit && form.password.length < 6) { setError("Password must be at least 6 characters"); return; }
-    if (form.password && form.password.length < 6) { setError("Password must be at least 6 characters"); return; }
+    if (!form.name.trim()) { setError("Họ tên là bắt buộc"); return; }
+    if (!form.email.trim()) { setError("Email là bắt buộc"); return; }
+    if (!isEdit && form.password.length < 6) { setError("Mật khẩu phải có ít nhất 6 ký tự"); return; }
+    if (form.password && form.password.length < 6) { setError("Mật khẩu phải có ít nhất 6 ký tự"); return; }
 
     setSaving(true);
-    const payload: Record<string, string> = {
-      name: form.name.trim(),
-      email: form.email.trim().toLowerCase(),
-      role: form.role,
-    };
+    const payload: Record<string, string> = { name: form.name.trim(), email: form.email.trim().toLowerCase(), role: form.role };
     if (!isEdit) payload.password = form.password;
     else if (form.password) payload.password = form.password;
 
-    const res = await fetch(
-      isEdit ? `/api/users/${user!.id}` : "/api/users",
-      {
-        method: isEdit ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
+    const res = await fetch(isEdit ? `/api/users/${user!.id}` : "/api/users", {
+      method: isEdit ? "PATCH" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
     const data = await res.json();
     setSaving(false);
-
-    if (!res.ok) { setError(data.error ?? "Failed to save user"); return; }
+    if (!res.ok) { setError(data.error ?? "Lưu người dùng thất bại"); return; }
     onSaved();
     onOpenChange(false);
   }
@@ -103,16 +76,14 @@ export function UserFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit User" : "Add New User"}</DialogTitle>
+          <DialogTitle>{isEdit ? "Chỉnh sửa người dùng" : "Thêm người dùng mới"}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-2">
-          {error && (
-            <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>}
 
           <div className="grid gap-1.5">
-            <Label htmlFor="u-name">Name *</Label>
+            <Label htmlFor="u-name">Họ tên *</Label>
             <Input id="u-name" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Alice" />
           </div>
 
@@ -122,50 +93,37 @@ export function UserFormModal({
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="u-pw">{isEdit ? "New Password" : "Password *"}</Label>
+            <Label htmlFor="u-pw">{isEdit ? "Mật khẩu mới" : "Mật khẩu *"}</Label>
             <div className="relative">
-              <Input
-                id="u-pw"
-                type={showPw ? "text" : "password"}
-                value={form.password}
+              <Input id="u-pw" type={showPw ? "text" : "password"} value={form.password}
                 onChange={(e) => set("password", e.target.value)}
-                placeholder={isEdit ? "Leave blank to keep current" : "Min 6 characters"}
-                className="pr-9"
-              />
-              <button
-                type="button"
+                placeholder={isEdit ? "Để trống nếu không muốn đổi" : "Tối thiểu 6 ký tự"}
+                className="pr-9" />
+              <button type="button" tabIndex={-1}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                onClick={() => setShowPw((v) => !v)}
-                tabIndex={-1}
-              >
+                onClick={() => setShowPw((v) => !v)}>
                 {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
-            {isEdit && <p className="text-xs text-muted-foreground">Leave blank to keep current password.</p>}
+            {isEdit && <p className="text-xs text-muted-foreground">Để trống nếu không muốn đổi mật khẩu.</p>}
           </div>
 
           <div className="grid gap-1.5">
-            <Label>Role</Label>
-            <Select
-              value={form.role}
-              onValueChange={(v) => set("role", v ?? "member")}
-              disabled={isSelf} // cannot change own role
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
+            <Label>Vai trò</Label>
+            <Select value={form.role} onValueChange={(v) => set("role", v ?? "member")} disabled={isSelf}>
+              <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="member">Member</SelectItem>
+                <SelectItem value="admin">Quản trị viên</SelectItem>
+                <SelectItem value="member">Thành viên</SelectItem>
               </SelectContent>
             </Select>
-            {isSelf && <p className="text-xs text-muted-foreground">You cannot change your own role.</p>}
+            {isSelf && <p className="text-xs text-muted-foreground">Bạn không thể thay đổi vai trò của mình.</p>}
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
-          <Button onClick={handleSave} disabled={saving}>{saving ? "Saving…" : "Save"}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Hủy</Button>
+          <Button onClick={handleSave} disabled={saving}>{saving ? "Đang lưu..." : "Lưu"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

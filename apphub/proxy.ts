@@ -29,10 +29,11 @@ export const config = {
   matcher: [
     /*
      * Protect all paths EXCEPT:
-     *  - /login, /api/auth/*  (auth)
-     *  - /_next/*             (Next.js internals)
-     *  - /favicon.ico, /icon.svg, /icon.png, /icons/*  (static assets)
+     *  - /login, /api/auth/*        (auth)
+     *  - /_next/*                   (Next.js internals)
+     *  - /favicon.ico, /icon.svg, /icon.png, /icons/*   (static assets)
+     *  - /uploads/*                 (uploaded user files — served from public/)
      */
-    "/((?!login|api/auth|_next/static|_next/image|favicon\\.ico|icon\\.svg|icon\\.png|icons).*)",
+    "/((?!login|api/auth|_next/static|_next/image|favicon\\.ico|icon\\.svg|icon\\.png|icons|uploads).*)",
   ],
 };

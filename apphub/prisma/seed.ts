@@ -2,7 +2,9 @@ import bcrypt from "bcryptjs";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "../generated/prisma/client";
 
-const adapter = new PrismaBetterSqlite3({ url: "file:./prisma/apphub.db" });
+const adapter = new PrismaBetterSqlite3({
+  url: process.env.DATABASE_URL ?? "file:./prisma/apphub.db",
+});
 const db = new PrismaClient({ adapter });
 
 // ---------------------------------------------------------------------------
@@ -10,11 +12,11 @@ const db = new PrismaClient({ adapter });
 // ---------------------------------------------------------------------------
 
 const CATEGORIES = [
-  { name: "Development", slug: "development", icon: "code-2",    order: 1 },
-  { name: "DevOps",      slug: "devops",      icon: "server",    order: 2 },
-  { name: "HR & Admin",  slug: "hr-admin",    icon: "users",     order: 3 },
-  { name: "Finance",     slug: "finance",     icon: "dollar-sign", order: 4 },
-  { name: "Marketing",   slug: "marketing",   icon: "megaphone", order: 5 },
+  { name: "Development", slug: "development", icon: "code-2", order: 1 },
+  { name: "DevOps", slug: "devops", icon: "server", order: 2 },
+  { name: "HR & Admin", slug: "hr-admin", icon: "users", order: 3 },
+  { name: "Finance", slug: "finance", icon: "dollar-sign", order: 4 },
+  { name: "Marketing", slug: "marketing", icon: "megaphone", order: 5 },
 ] as const;
 
 const APPS: {
@@ -169,7 +171,12 @@ async function main() {
   const admin = await db.user.upsert({
     where: { email: "admin@internal.com" },
     update: { name: "Administrator", password: adminHash, role: "admin" },
-    create: { email: "admin@internal.com", password: adminHash, name: "Administrator", role: "admin" },
+    create: {
+      email: "admin@internal.com",
+      password: adminHash,
+      name: "Administrator",
+      role: "admin",
+    },
   });
   console.log(`  ✓ ${admin.email} [admin]`);
 

@@ -53,3 +53,7 @@ prisma/apphub.db-journal
 # uploaded icons — keep the directory but ignore actual uploads
 /public/uploads/icons/*
 !/public/uploads/icons/.gitkeep
+
+# Runtime upload storage (outside public/ so it survives Next.js builds)
+/uploads/icons/*
+!/uploads/icons/.gitkeep

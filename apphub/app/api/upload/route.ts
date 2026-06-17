@@ -10,7 +10,8 @@ const ALLOWED_TYPES: Record<string, string> = {
   "image/svg+xml": "svg",
 };
 const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
-const UPLOAD_DIR = join(process.cwd(), "public", "uploads", "icons");
+const UPLOAD_DIR = join(process.cwd(), "uploads", "icons"); // outside public/ — survives builds
+const URL_PREFIX = "/api/uploads/icons";
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(dest, buffer);
 
-    const url = `/uploads/icons/${filename}`;
+    const url = `${URL_PREFIX}/${filename}`;
     return NextResponse.json({ url }, { status: 201 });
   } catch (e) {
     console.error("[POST /api/upload]", e);

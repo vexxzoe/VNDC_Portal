@@ -34,6 +34,6 @@ export const config = {
      *  - /favicon.ico, /icon.svg, /icon.png, /icons/*   (static assets)
      *  - /uploads/*                 (uploaded user files — served from public/)
      */
-    "/((?!login|api/auth|_next/static|_next/image|favicon\\.ico|icon\\.svg|icon\\.png|icons|uploads).*)",
+    "/((?!login|api/auth|api/uploads|_next/static|_next/image|favicon\\.ico|icon\\.svg|icon\\.png|icons|uploads).*)",
   ],
 };
